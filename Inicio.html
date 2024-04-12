@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="diseño.css">
+    <title>Tipo de Triángulos</title>
+</head>
+<body>
+    <section class="form-register">
+    <h1>Calculadora de Triángulos</h1> <br>
+    <form id="coordenadasForm">
+        <label  for="x1">Coordenada x del vértice 1:</label>
+        <input class="controls" type="number" id="x1" name="x1" step="any" required>
+        <label for="y1">Coordenada y del vértice 1:</label>
+        <input class="controls" type="number" id="y1" name="y1" step="any" required><br><br>
+        <label for="x2">Coordenada x del vértice 2:</label>
+        <input class="controls" type="number" id="x2" name="x2" step="any" required>
+        <label for="y2">Coordenada y del vértice 2:</label>
+        <input class="controls" type="number" id="y2" name="y2" step="any" required><br><br>
+        <label for="x3">Coordenada x del vértice 3:</label>
+        <input class="controls" type="number" id="x3" name="x3" step="any" required>
+        <label for="y3">Coordenada y del vértice 3:</label>
+        <input class="controls" type="number" id="y3" name="y3" step="any" required><br><br>
+        <input class="controls" type="submit" value="Calcular">
+    </form>
+    <div id="resultado"></div>
+</section>
+   
+
+    <script>
+        function distanciaPuntos(punto1, punto2) {
+            return Math.sqrt(Math.pow((punto2[0] - punto1[0]), 2) + Math.pow((punto2[1] - punto1[1]), 2));
+        }
+
+        function calcularLados(vertices) {
+            const lado1 = distanciaPuntos(vertices[0], vertices[1]);
+            const lado2 = distanciaPuntos(vertices[1], vertices[2]);
+            const lado3 = distanciaPuntos(vertices[2], vertices[0]);
+            return [lado1, lado2, lado3];
+        }
+
+        function calcularPerimetro(lados) {
+            return lados.reduce((a, b) => a + b, 0);
+        }
+
+        function calcularArea(vertices, lados) {
+            const s = calcularPerimetro(lados) / 2;
+            const area = Math.sqrt(s * (s - lados[0]) * (s - lados[1]) * (s - lados[2]));
+            return area;
+        }
+
+        function calcularAngulos(lados) {
+            const angulo_a = Math.acos((Math.pow(lados[1], 2) + Math.pow(lados[2], 2) - Math.pow(lados[0], 2)) / (2 * lados[1] * lados[2])) * (180 / Math.PI);
+            const angulo_b = Math.acos((Math.pow(lados[0], 2) + Math.pow(lados[2], 2) - Math.pow(lados[1], 2)) / (2 * lados[0] * lados[2])) * (180 / Math.PI);
+            const angulo_c = 180 - angulo_a - angulo_b;
+            return [angulo_a, angulo_b, angulo_c];
+        }
+
+        function determinarTipo(lados) {
+            if (lados[0] === lados[1] && lados[1] === lados[2]) {
+                return "Equilátero";
+            } else if (lados[0] === lados[1] || lados[1] === lados[2] || lados[2] === lados[0]) {
+                return "Isósceles";
+            } else {
+                return "Escaleno";
+            }
+        }
+
+        document.getElementById('coordenadasForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const x1 = parseFloat(document.getElementById('x1').value);
+            const y1 = parseFloat(document.getElementById('y1').value);
+            const x2 = parseFloat(document.getElementById('x2').value);
+            const y2 = parseFloat(document.getElementById('y2').value);
+            const x3 = parseFloat(document.getElementById('x3').value);
+            const y3 = parseFloat(document.getElementById('y3').value);
+
+            const vertices = [[x1, y1], [x2, y2], [x3, y3]];
+            const lados = calcularLados(vertices);
+            const tipo = determinarTipo(lados);
+            const perimetro = calcularPerimetro(lados);
+            const area = calcularArea(vertices, lados);
+            const angulos = calcularAngulos(lados);
+
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = "<p>Resultados:</p>";
+            resultadoDiv.innerHTML += `<p>Tipo de triángulo: ${tipo}</p>`;
+            resultadoDiv.innerHTML += `<p>Perímetro: ${perimetro}</p>`;
+            resultadoDiv.innerHTML += `<p>Área: ${area}</p>`;
+            resultadoDiv.innerHTML += `<p>Ángulos: Ángulo A = ${angulos[0]}, Ángulo B = ${angulos[1]}, Ángulo C = ${angulos[2]}</p>`;
+        });
+    </script>
+</body>
+</html>
+
